@@ -21,7 +21,9 @@ const messageCtrl = {
     try {
       const { sender, recipient, text, media, call } = req.body;
 
-      if (!recipient || (!text.trim() && media.length === 0 && !call)) return;
+      if (!recipient || (!text.trim() && media.length === 0 && !call)) {
+        return res.status(400).json({ msg: "Vui lòng cung cấp thông tin người nhận và nội dung tin nhắn." });
+      }
 
       const newConversation = await Conversations.findOneAndUpdate(
         {
@@ -50,9 +52,9 @@ const messageCtrl = {
 
       await newMessage.save();
 
-      res.json({ msg: "Create Success!" });
+      res.json({ msg: "Tạo tin nhắn thành công!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   getConversations: async (req, res) => {
@@ -73,7 +75,7 @@ const messageCtrl = {
         result: conversations.length,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   getMessages: async (req, res) => {
@@ -95,7 +97,7 @@ const messageCtrl = {
         result: messages.length,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   deleteMessages: async (req, res) => {
@@ -104,9 +106,9 @@ const messageCtrl = {
         _id: req.params.id,
         sender: req.user._id,
       });
-      res.json({ msg: "Delete Success!" });
+      res.json({ msg: "Xóa tin nhắn thành công!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   deleteConversation: async (req, res) => {
@@ -119,9 +121,9 @@ const messageCtrl = {
       });
       await Messages.deleteMany({ conversation: newConver._id });
 
-      res.json({ msg: "Delete Success!" });
+      res.json({ msg: "Xóa cuộc trò chuyện thành công!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
 };

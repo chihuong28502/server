@@ -10,16 +10,16 @@ const authCtrl = {
 
       const user_name = await Users.findOne({ username: newUserName });
       if (user_name)
-        return res.status(400).json({ msg: "This user name already exists." });
+        return res.status(400).json({ msg: "Tên người dùng này đã tồn tại." });
 
       const user_email = await Users.findOne({ email });
       if (user_email)
-        return res.status(400).json({ msg: "This email already exists." });
+        return res.status(400).json({ msg: "Email này đã tồn tại." });
 
       if (password.length < 6)
         return res
           .status(400)
-          .json({ msg: "Password must be at least 6 characters." });
+          .json({ msg: "Mật khẩu phải có ít nhất 6 ký tự." });
 
       const passwordHash = await bcrypt.hash(password, 12);
 
@@ -37,13 +37,13 @@ const authCtrl = {
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
         path: "/api/refresh_token",
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 ngày
       });
 
       await newUser.save();
 
       res.json({
-        msg: "Register Success!",
+        msg: "Đăng ký thành công!",
         access_token,
         user: {
           ...newUser._doc,
@@ -51,7 +51,7 @@ const authCtrl = {
         },
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   login: async (req, res) => {
@@ -64,11 +64,11 @@ const authCtrl = {
       );
 
       if (!user)
-        return res.status(400).json({ msg: "This email does not exist." });
+        return res.status(400).json({ msg: "Email này không tồn tại." });
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch)
-        return res.status(400).json({ msg: "Password is incorrect." });
+        return res.status(400).json({ msg: "Mật khẩu không chính xác." });
 
       const access_token = createAccessToken({ id: user._id });
       const refresh_token = createRefreshToken({ id: user._id });
@@ -76,11 +76,11 @@ const authCtrl = {
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
         path: "/api/refresh_token",
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 ngày
       });
 
       res.json({
-        msg: "Login Success!",
+        msg: "Đăng nhập thành công!",
         access_token,
         user: {
           ...user._doc,
@@ -88,27 +88,27 @@ const authCtrl = {
         },
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   logout: async (req, res) => {
     try {
       res.clearCookie("refreshtoken", { path: "/api/refresh_token" });
-      return res.json({ msg: "Logged out!" });
+      return res.json({ msg: "Đăng xuất thành công!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   generateAccessToken: async (req, res) => {
     try {
       const rf_token = req.cookies.refreshtoken;
-      if (!rf_token) return res.status(400).json({ msg: "Please login now." });
+      if (!rf_token) return res.status(400).json({ msg: "Vui lòng đăng nhập." });
 
       jwt.verify(
         rf_token,
         process.env.REFRESH_TOKEN_SECRET,
         async (err, result) => {
-          if (err) return res.status(400).json({ msg: "Please login now." });
+          if (err) return res.status(400).json({ msg: "Vui lòng đăng nhập." });
 
           const user = await Users.findById(result.id)
             .select("-password")
@@ -118,7 +118,7 @@ const authCtrl = {
             );
 
           if (!user)
-            return res.status(400).json({ msg: "This does not exist." });
+            return res.status(400).json({ msg: "Người dùng không tồn tại." });
 
           const access_token = createAccessToken({ id: result.id });
 
@@ -129,7 +129,7 @@ const authCtrl = {
         }
       );
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
 };

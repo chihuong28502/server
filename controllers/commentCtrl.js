@@ -8,12 +8,12 @@ const commentCtrl = {
 
       const post = await Posts.findById(postId);
       if (!post)
-        return res.status(400).json({ msg: "This post does not exist." });
+        return res.status(400).json({ msg: "Bài viết này không tồn tại." });
 
       if (reply) {
         const cm = await Comments.findById(reply);
         if (!cm)
-          return res.status(400).json({ msg: "This comment does not exist." });
+          return res.status(400).json({ msg: "Bình luận này không tồn tại." });
       }
 
       const newComment = new Comments({
@@ -37,7 +37,7 @@ const commentCtrl = {
 
       res.json({ newComment });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   updateComment: async (req, res) => {
@@ -52,9 +52,9 @@ const commentCtrl = {
         { content }
       );
 
-      res.json({ msg: "Update Success!" });
+      res.json({ msg: "Cập nhật bình luận thành công!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   likeComment: async (req, res) => {
@@ -64,7 +64,7 @@ const commentCtrl = {
         likes: req.user._id,
       });
       if (comment.length > 0)
-        return res.status(400).json({ msg: "You liked this post." });
+        return res.status(400).json({ msg: "Bạn đã thích bình luận này rồi." });
 
       await Comments.findOneAndUpdate(
         { _id: req.params.id },
@@ -74,9 +74,9 @@ const commentCtrl = {
         { new: true }
       );
 
-      res.json({ msg: "Liked Comment!" });
+      res.json({ msg: "Thích bình luận thành công!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   unLikeComment: async (req, res) => {
@@ -89,9 +89,9 @@ const commentCtrl = {
         { new: true }
       );
 
-      res.json({ msg: "UnLiked Comment!" });
+      res.json({ msg: "Bỏ thích bình luận thành công!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   deleteComment: async (req, res) => {
@@ -108,9 +108,9 @@ const commentCtrl = {
         }
       );
 
-      res.json({ msg: "Deleted Comment!" });
+      res.json({ msg: "Xóa bình luận thành công!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
 };

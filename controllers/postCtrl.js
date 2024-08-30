@@ -23,7 +23,7 @@ const postCtrl = {
       const { content, images } = req.body;
 
       if (images.length === 0)
-        return res.status(400).json({ msg: "Please add your photo." });
+        return res.status(400).json({ msg: "Vui lòng thêm ảnh của bạn." });
 
       const newPost = new Posts({
         content,
@@ -33,14 +33,14 @@ const postCtrl = {
       await newPost.save();
 
       res.json({
-        msg: "Created Post!",
+        msg: "Đã tạo bài viết!",
         newPost: {
           ...newPost._doc,
           user: req.user,
         },
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   getPosts: async (req, res) => {
@@ -64,12 +64,12 @@ const postCtrl = {
         });
 
       res.json({
-        msg: "Success!",
+        msg: "Thành công!",
         result: posts.length,
         posts,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   updatePost: async (req, res) => {
@@ -93,7 +93,7 @@ const postCtrl = {
         });
 
       res.json({
-        msg: "Updated Post!",
+        msg: "Cập nhật bài viết thành công!",
         newPost: {
           ...post._doc,
           content,
@@ -101,7 +101,7 @@ const postCtrl = {
         },
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   likePost: async (req, res) => {
@@ -111,7 +111,7 @@ const postCtrl = {
         likes: req.user._id,
       });
       if (post.length > 0)
-        return res.status(400).json({ msg: "You liked this post." });
+        return res.status(400).json({ msg: "Bạn đã thích bài viết này." });
 
       const like = await Posts.findOneAndUpdate(
         { _id: req.params.id },
@@ -122,11 +122,11 @@ const postCtrl = {
       );
 
       if (!like)
-        return res.status(400).json({ msg: "This post does not exist." });
+        return res.status(400).json({ msg: "Bài viết này không tồn tại." });
 
-      res.json({ msg: "Liked Post!" });
+      res.json({ msg: "Thích bài viết!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   unLikePost: async (req, res) => {
@@ -140,11 +140,11 @@ const postCtrl = {
       );
 
       if (!like)
-        return res.status(400).json({ msg: "This post does not exist." });
+        return res.status(400).json({ msg: "Bài viết này không tồn tại." });
 
-      res.json({ msg: "UnLiked Post!" });
+      res.json({ msg: "Bỏ thích bài viết!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   getUserPosts: async (req, res) => {
@@ -160,7 +160,7 @@ const postCtrl = {
         result: posts.length,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   getPost: async (req, res) => {
@@ -176,13 +176,13 @@ const postCtrl = {
         });
 
       if (!post)
-        return res.status(400).json({ msg: "This post does not exist." });
+        return res.status(400).json({ msg: "Bài viết này không tồn tại." });
 
       res.json({
         post,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   getPostsDicover: async (req, res) => {
@@ -197,12 +197,12 @@ const postCtrl = {
       ]);
 
       return res.json({
-        msg: "Success!",
+        msg: "Thành công!",
         result: posts.length,
         posts,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   deletePost: async (req, res) => {
@@ -214,14 +214,14 @@ const postCtrl = {
       await Comments.deleteMany({ _id: { $in: post.comments } });
 
       res.json({
-        msg: "Deleted Post!",
+        msg: "Đã xóa bài viết!",
         newPost: {
           ...post,
           user: req.user,
         },
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   savePost: async (req, res) => {
@@ -231,7 +231,7 @@ const postCtrl = {
         saved: req.params.id,
       });
       if (user.length > 0)
-        return res.status(400).json({ msg: "You saved this post." });
+        return res.status(400).json({ msg: "Bạn đã lưu bài viết này." });
 
       const save = await Users.findOneAndUpdate(
         { _id: req.user._id },
@@ -242,11 +242,11 @@ const postCtrl = {
       );
 
       if (!save)
-        return res.status(400).json({ msg: "This user does not exist." });
+        return res.status(400).json({ msg: "Người dùng này không tồn tại." });
 
-      res.json({ msg: "Saved Post!" });
+      res.json({ msg: "Đã lưu bài viết!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   unSavePost: async (req, res) => {
@@ -260,11 +260,11 @@ const postCtrl = {
       );
 
       if (!save)
-        return res.status(400).json({ msg: "This user does not exist." });
+        return res.status(400).json({ msg: "Người dùng này không tồn tại." });
 
-      res.json({ msg: "unSaved Post!" });
+      res.json({ msg: "Đã bỏ lưu bài viết!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
   getSavePosts: async (req, res) => {
@@ -283,7 +283,7 @@ const postCtrl = {
         result: savePosts.length,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      return res.status(500).json({ msg: "Đã xảy ra lỗi: " + err.message });
     }
   },
 };
